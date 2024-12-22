@@ -46,41 +46,51 @@ const images = [
   },
 ];
 
-// Додаємо елементи в галерею
-const gallery = document.querySelector('.gallery');
+const galleryContainer = document.querySelector('.gallery');
 
-images.forEach(image => {
+// Створюємо розмітку для кожного елемента галереї
+images.forEach(({ preview, original, description }) => {
   const galleryItem = document.createElement('li');
   galleryItem.classList.add('gallery-item');
 
-  galleryItem.innerHTML = `
-    <a class="gallery-link" href="${image.original}">
-      <img
-        class="gallery-image"
-        src="${image.preview}"
-        data-source="${image.original}"
-        alt="${image.description}"
-      />
-    </a>
-  `;
+  const galleryLink = document.createElement('a');
+  galleryLink.classList.add('gallery-link');
+  galleryLink.href = original;
 
-  gallery.appendChild(galleryItem);
+  const galleryImage = document.createElement('img');
+  galleryImage.classList.add('gallery-image');
+  galleryImage.src = preview;
+  galleryImage.dataset.source = original;
+  galleryImage.alt = description;
+
+  // Додаємо зображення до посилання, а посилання до елемента списку
+  galleryLink.appendChild(galleryImage);
+  galleryItem.appendChild(galleryLink);
+
+  // Додаємо елемент списку до контейнера галереї
+  galleryContainer.appendChild(galleryItem);
 });
 
-// Делегування подій для відкриття модального вікна
-gallery.addEventListener('click', event => {
-  event.preventDefault();
+// Додаємо обробник події кліка для контейнера галереї
+galleryContainer.addEventListener('click', (event) => {
+  // Перевіряємо, чи клік був по зображенню всередині галереї
+  const galleryImage = event.target.closest('.gallery-image');
+  
+  if (galleryImage) {
+    // Отримуємо посилання на велике зображення з data-source
+    const largeImageLink = galleryImage.dataset.source;
+    
+    // Створюємо HTML розмітку для модального вікна із зображенням
+    const modalContent = `<img src="${largeImageLink}" alt="${galleryImage.alt}" />`;
+    
+    // Ініціалізуємо модальне вікно за допомогою basicLightbox
+    const modal = basicLightbox.create(modalContent);
+    
+    // Відкриваємо модальне вікно
+    modal.show();
 
-  if (event.target.nodeName !== 'IMG') {
-    return;
+    // Запобігаємо переходу за посиланням
+    event.preventDefault();
   }
-
-  const largeImageURL = event.target.dataset.source;
-
-  // Відкриваємо модальне вікно з великим зображенням
-  const instance = basicLightbox.create(`
-    <img src="${largeImageURL}" alt="Image">
-  `);
-
-  instance.show();
 });
+
