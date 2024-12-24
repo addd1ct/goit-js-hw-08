@@ -67,13 +67,13 @@ const images = [
 const imagesContainer = document.querySelector(".gallery");
 
 const imagesMarkup = images
-    .map(({ prewiev, original, description }) => {
+    .map(({ preview, original, description }) => {
         return `
             <li class="gallery-item">
                 <a class="gallery-link" href="${original}">
                     <img
                         class="gallery-image"
-                        src="${prewiev}"
+                        src="${preview}"
                         data-source="${original}"
                         alt="${description}" 
                     />
@@ -91,7 +91,7 @@ imagesContainer.addEventListener("click", (event) => {
     const isImage = event.target.classList.contains("gallery-image");
     if (!isImage) return;
 
-    const LargeImageURL = event.target.dataset.source;
+    const largeImageURL = event.target.dataset.source;
 
     const instance = basicLightbox.create(`
         <img src="${largeImageURL}" alt="${event.target.alt}" />
